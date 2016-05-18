@@ -1,0 +1,12 @@
+node M1 (z:bool) returns (x:int);
+var q: int;
+let
+  x = 0 -> if pre(x) = 3 then 0
+              else pre(x) + 1;
+tel
+
+node M2 (x:int) returns (y:int);
+var w:int;
+let
+  y = x -> x + x;
+tel

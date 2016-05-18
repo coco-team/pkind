@@ -1,0 +1,8 @@
+#!/bin/sh
+
+# Change this line to reflect where your yices files are installed!
+yices_root=@YICESDIR_PATH@
+gmp_library=@GMPLIB_PATH@
+
+rm -f yicesw
+gcc -static -o yicesw -I$yices_root/include -L$yices_root/lib -I$gmp_library ./src/yicesw.c -lyices -lgmp -lstdc++ 

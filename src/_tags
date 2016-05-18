@@ -1,0 +1,5 @@
+<*.ml>: use_mpi, use_extLib
+<kind_invariant.{byte,native}> or <kind.{byte,native}>: use_unix, use_str, use_mpi, use_extLib
+<pkind_main.{byte,native}> or <pkind.{byte,native}>: use_unix, use_str, use_mpi, use_extLib
+<lsimplify_main.{byte,native}>: use_unix, use_str, use_mpi, use_extLib
+

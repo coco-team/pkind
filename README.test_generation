@@ -1,0 +1,14 @@
+Test Generation
+
+
+
+
+* To generate test cases using BMC with pkind
+  > python dist/pkind.py -f [LUSTRE_FILE] -c [TESTCONDITIONS]
+   - TESTCONDITIONS : they have to be in " ", e.g. "a = b"
+
+
+* To generate a test case which kills a mutant based on invariants
+  > python dist/pkind.py -inv -f [ORIGINAL_FILE] -mu [MUTATED_FILE]
+
+

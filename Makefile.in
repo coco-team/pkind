@@ -1,0 +1,59 @@
+# -*- Makefile -*-
+VERSION = 1
+PKGNAME = pkind-$(VERSION).`date +%Y.%m.%d`
+
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+bindir=@bindir@
+
+LOCAL_BINDIR=bin
+
+all: pkind kind-invariant lsimplify
+
+pkind: all_deps
+	make -C src pkind
+	mkdir -p $(LOCAL_BINDIR)
+	cp -f src/_build/pkind_main.native $(LOCAL_BINDIR)/pkind-main
+	cp -f src/_build/pkind.native $(LOCAL_BINDIR)/pkind
+
+kind-invariant: all_deps
+	make -C src kind-invariant
+	mkdir -p $(LOCAL_BINDIR)
+	cp -f src/_build/kind_invariant.native $(LOCAL_BINDIR)/kind-inv
+
+lsimplify: all_deps
+	make -C src lsimplify
+	mkdir -p $(LOCAL_BINDIR)
+	cp -f src/_build/lsimplify_main.native $(LOCAL_BINDIR)/lsimplify
+
+.Phony: stop
+stop:
+
+all_deps: @MPI_LIB@ @EXT_LIB@ @YICESW_DEP@
+
+extlib:
+	@$(MAKE) -s -C dependencies extlib
+
+ocamlmpi:
+	@$(MAKE) -s -C dependencies ocamlmpi
+
+yicesw:
+	@$(MAKE) -s -C dependencies yicesw
+
+clean:
+	make -C src clean
+
+dist-clean: clean
+	make -C dependencies clean
+	rm -f Makefile dependencies/Makefile src/myocamlbuild.ml src/solvers_path.ml \
+	      dependencies/build_yicesw.sh config.log config.status configure 
+	rm -rf lib 
+	rm -rf bin
+
+
+install: 
+	mkdir -p ${bindir}
+	for i in $(LOCAL_BINDIR)/*; do install -m 0755 $$i ${bindir}; done
+
+.PHONY: ocamlmpi ocamlmpi_install extlib extlib_install pkind kind-inv lsimplify clean install dist-clean yicesw yicesw_install
+

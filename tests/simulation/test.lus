@@ -1,0 +1,6 @@
+node mynode (x: bool; a, b: int; c: real) returns (OK: bool);
+var y:bool;
+let
+ y = x -> if 2.8 > 1.8 then a = b else c = 2.0;
+ OK = true;
+tel.

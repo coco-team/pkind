@@ -1,0 +1,38 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+bindir=@bindir@
+
+LOCAL_BINDIR=../bin
+LOCAL_LIBDIR=../lib
+yices_root=@YICESDIR_PATH@
+
+# Flags to compile yicesw
+# -static on Linux
+# -Wl,-no_pie on Mac OS X
+YICESW_CFLAGS=@YICESW_CFLAGS@
+GMPLIB_PATH=@GMPLIB_PATH@
+
+yicesw: 
+	mkdir -p $(LOCAL_BINDIR)
+	gcc $(YICESW_CFLAGS) -o $(LOCAL_BINDIR)/yicesw -L$(GMPLIB_PATH) -I$(yices_root)/include -L$(yices_root)/lib yicesw.c -lyices -lgmp -lstdc++
+
+ocamlmpi: $(LOCAL_LIBDIR)/mpi.cmxa
+
+$(LOCAL_LIBDIR)/mpi.cmxa:
+	mkdir -p $(LOCAL_LIBDIR)
+	cd ocamlmpi-PKind; make all
+	cp ocamlmpi-PKind/*.cmi $(LOCAL_LIBDIR)
+	cp ocamlmpi-PKind/libcamlmpi.a $(LOCAL_LIBDIR)
+	cp ocamlmpi-PKind/mpi.cma $(LOCAL_LIBDIR)
+	cp ocamlmpi-PKind/*.a $(LOCAL_LIBDIR)
+	cp ocamlmpi-PKind/mpi.cmxa $(LOCAL_LIBDIR)
+
+extlib: $(LOCAL_LIBDIR)/extLib.cmxa
+
+$(LOCAL_LIBDIR)/extLib.cmxa:
+	mkdir -p $(LOCAL_LIBDIR)
+	cd extlib; ocaml install.ml -d ../$(LOCAL_LIBDIR) -n -nodoc	
+
+clean:
+	make -C ocamlmpi-PKind clean
+	rm $(LOCAL_LIBDIR)/*.cm* $(LOCAL_LIBDIR)/*.a

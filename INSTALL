@@ -1,0 +1,95 @@
+=============
+Requirements
+=============
+
+KIND relies on the following systems/solvers:
+
+1. OCaml (version 3.11.2 or greater). More information can be found at http://www.ocaml.org.
+
+2. An MPI implementation: 
+    * OPENMPI (http://www.open-mpi.org/)
+
+3. A compatible SMT solver:
+     * Yices, available at http://yices.csl.sri.com/
+         Get the latest version, with GMP statically linked
+         (this requires a click-through license agreement)
+   
+4. The GNU Autoconf tool (http://www.gnu.org/software/autoconf/)
+
+5. python 2.7
+
+6. python library: pyparsing
+
+=================
+Required packages
+=================
+
+KIND relies on the following OCaml libraries:
+
+  * ExtLib: Extended library for OCaml
+  * OcamlMpi: Mpi wrapper for OCaml
+
+If not present, both libraries will be installed in the './lib' directory.
+
+
+======================================
+Configuration and Installation of KIND
+======================================
+
+The './configure' script examines your system and checks for the
+required packages and solvers. The script has some options, that can
+be listed using the command './configure --help'.
+
+The script is generated locally by running 
+
+  > autoconf
+
+If you would like to compile and install Kind with the Yices wrapper (which is recommended), 
+issue the following command:
+
+  > ./configure  --with-yicesw --with-yices-dir=[YICES DIR]
+
+If you would like to compile and install KIND in a local directory, issue the following command:
+
+  > ./configure --prefix=[LOCAL-DIR] --with-yicesw --with-yices-dir=[YICES DIR]
+
+If the configuration process was successful, it will generate the
+necessary Makefile. 
+
+To compile KIND:
+  
+  > make
+
+To install KIND:
+
+  > make install  
+
+if you have write permissions in the install directory. Otherwise:
+
+  > sudo make install 
+
+
+If you have configured and installed KIND in a local directory 
+(i.e. by using --prefix=[LOCAL-DIR] in ./configure); 
+you need to add the [LOCAL-DIR] to your system path.
+
+
+============
+SMT Solvers
+============
+
+The default operation of Kind uses a wrapper version of the Yices solver.
+The wrapper is written in C and, when compiled, calls the Yices (statically
+linked) library.  Yices command line version's interactive mode is limited 
+in the size of formulas it can accept.  Depending on the version of Yices 
+you use, you may need to upgrade your compiler version.
+
+
+=======
+Contact
+=======
+
+For more information please contact:
+
+    * Temesghen Kahsai (teme.kahsai AT sv.cmu.edu) 
+

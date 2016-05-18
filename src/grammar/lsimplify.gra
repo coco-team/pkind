@@ -1,0 +1,157 @@
+lsimplify
+
+line_comment = "--"
+
+(* Files *)
+Program      : program      -> include_list decls
+Include      : linclude     -> INCLUDE STRINGLIT
+IncludeList  : include_list -> { linclude }*
+Decls        : decls        -> { one_decl }*
+ConstOneDecl : one_decl     -> const_decl
+TypeOneDecl  : one_decl     -> type_decl
+FuncOneDecl  : one_decl     -> func_decl
+NodeOneDecl  : one_decl     -> node_decl
+
+(* Constant Declarations *)
+ConstDecl          : const_decl     -> CONST { one_const_decl SEMICOLON }+
+EqOneConstDecl  : one_const_decl -> IDENTIFIER EQUALS exp
+ListOneConstDecl : one_const_decl -> id_list COLON IDENTIFIER
+VarList            : id_list        -> IDENTIFIER { COMMA IDENTIFIER  }*
+
+(* Type Declarations *)
+TypeDecl        : type_decl     -> TYPE { one_type_decl SEMICOLON }+
+EqOneTypeDecl   : one_type_decl -> IDENTIFIER EQUALS ltype
+ListOneTypeDecl : one_type_decl -> ltype_list
+IdType          : ltype         -> IDENTIFIER
+ArrayType       : ltype         -> ltype UPCARAT exp
+StructType      : ltype         -> LEFTSQUARE type_list RIGHTSQUARE
+TypeList        : type_list     -> ltype { COMMA ltype  }*
+LTypeList       : ltype_list    -> IDENTIFIER { COMMA IDENTIFIER  }*
+
+(* Function Declarations *)
+FuncDecl : func_decl -> FUNCTION IDENTIFIER LEFTPAREN var_decl_list RIGHTPAREN RETURNS LEFTPAREN var_decl_list RIGHTPAREN
+
+(* Node Declarations *)
+NodeDecl     : node_decl     -> NODE IDENTIFIER LEFTPAREN in_param_list RIGHTPAREN RETURNS LEFTPAREN in_param_list RIGHTPAREN SEMICOLON [ local_decl ] body
+InParam      : in_param      -> clocked_var_decl
+ConstInParam : in_param      -> CONST var_decl
+InParamList  : in_param_list -> in_param { SEMICOLON in_param }*
+
+(* Variable Declarations *)
+LocalDecl          : local_decl            -> VAR { clocked_var_decl SEMICOLON }+
+ClockedVarDecl0    : clocked_var_decl      -> var_decl
+ClockedVarDecl1    : clocked_var_decl      -> LEFTPAREN var_decl_list RIGHTPAREN WHEN IDENTIFIER
+ClockedVarDeclList : clocked_var_decl_list -> clocked_var_decl { SEMICOLON clocked_var_decl }*
+VarDecl            : var_decl              -> id_list COLON ltype
+VarDeclList        : var_decl_list         -> var_decl { SEMICOLON var_decl }*
+
+(* Equations *)
+Body           : body           -> LET equation_list TEL body_end
+NoBodyEnd      : body_end       ->
+BodyEnd        : body_end       -> SEMICOLON
+AssertEquation : equation       -> ASSERT exp
+AssignEquation : equation       -> left_part EQUALS exp
+KindEquation   : equation       -> KINDCOMM IDENTIFIER [ exp ]
+EquationList   : equation_list  -> { equation SEMICOLON }+
+LeftPart       : left_part      -> left_elem_list
+ParenLeftPart  : left_part      -> LEFTPAREN left_elem_list RIGHTPAREN
+IdLeftElem     : left_elem      -> IDENTIFIER
+StructLeftElem : left_elem      -> struct_filter
+SliceLeftElem  : left_elem      -> tab_access
+LeftElemList   : left_elem_list -> left_elem { COMMA left_elem }*
+StructFilter   : struct_filter  -> LEFTSQUARE left_elem_list RIGHTSQUARE
+TabAccess      : tab_access     -> IDENTIFIER selector
+MultiTabAccess : tab_access     -> tab_access selector
+Selector       : selector       -> LEFTSQUARE exp sel_sub RIGHTSQUARE
+SelSub         : sel_sub        -> [DOTDOT exp sel_subsub]
+SelSubSub      : sel_subsub     -> [STEP exp]
+
+(* Expressions *)
+IntExp     : exp      -> INTEGER
+RealExp    : exp      -> REAL
+IdExp      : exp      -> IDENTIFIER
+NodeExp    : exp      -> IDENTIFIER LEFTPAREN exp_list RIGHTPAREN 
+ListExp    : exp      -> LEFTPAREN exp_list RIGHTPAREN 
+TupleExp   : exp      -> LEFTSQUARE exp_list RIGHTSQUARE
+NotExp     : exp      -> NOT exp
+NegExp     : exp      -> MINUS exp
+PreExp     : exp      -> PRE exp
+CurrentExp : exp      -> CURRENT exp
+ArrowExp   : exp      -> exp ARROW exp
+WhenExp    : exp      -> exp WHEN exp
+OrExp      : exp      -> exp OR exp
+XorExp     : exp      -> exp XOR exp
+AndExp     : exp      -> exp AND exp
+ImpExp     : exp      -> exp IMPLIES exp
+EqExp      : exp      -> exp EQUALS exp
+DiamondExp : exp      -> exp DIAMOND exp
+LtExp      : exp      -> exp LESSTHAN exp
+GtExp      : exp      -> exp GREATERTHAN exp
+LteExp     : exp      -> exp LTEQUALS exp
+GteExp     : exp      -> exp GTEQUALS exp
+PlusExp    : exp      -> exp PLUS exp
+MinusExp   : exp      -> exp MINUS exp
+StarExp    : exp      -> exp STAR exp
+SlashExp   : exp      -> exp SLASH exp
+DivExp     : exp      -> exp DIV exp
+ModExp     : exp      -> exp MOD exp
+ArrayExp   : exp      -> exp UPCARAT exp
+PipeExp    : exp      -> exp PIPE exp
+SliceExp   : exp      -> exp LEFTSQUARE exp sel_sub RIGHTSQUARE (* this last part should be "selector", but that causes reduce/reduce *)
+IfExp      : exp      -> IF exp THEN exp ELSE exp
+WithExp    : exp      -> WITH exp THEN exp ELSE exp 
+PoundExp   : exp      -> POUND LEFTPAREN exp_list RIGHTPAREN 
+ExpList    : exp_list -> exp { COMMA exp }*
+
+KINDCOMM    = "--%"
+DOTDOT      = ".."
+ARROW       = "->"
+IMPLIES     = "=>"
+DIAMOND     = "<>"
+LTEQUALS    = "<="
+GTEQUALS    = ">="
+LEFTPAREN   = "("
+RIGHTPAREN  = ")"
+LEFTSQUARE  = "["
+RIGHTSQUARE = "]"
+LESSTHAN    = "<"
+GREATERTHAN = ">"
+PLUS        = "+"
+STAR        = "*"
+SLASH       = "/"
+UPCARAT     = "^"
+PIPE        = "|"
+SEMICOLON   = ";"
+COMMA       = ","
+COLON       = ":"
+EQUALS      = "="
+MINUS       = "-"
+POUND       = "#"
+FUNCTION    = "function"
+CURRENT     = "current"
+INCLUDE     = "include"
+RETURNS     = "returns"
+ASSERT      = "assert"
+CONST       = "const"
+ELSE        = "else"
+NODE        = "node"
+STEP        = "step"
+THEN        = "then"
+TYPE        = "type"
+WHEN        = "when"
+WITH        = "with"
+AND         = "and"
+DIV         = "div"
+LET         = "let"
+MOD         = "mod"
+NOT         = "not"
+PRE         = "pre"
+TEL         = "tel"
+VAR         = "var"
+XOR         = "xor"
+IF          = "if"
+OR          = "or"
+REAL        = {{['0'-'9']+ '.' ['0'-'9']+ (['e' 'E'] ['+' '-'] ['0'-'9']+)?}}
+INTEGER     = {{['0'-'9']+}}
+IDENTIFIER  = {{ ['a'-'z' 'A'-'Z'] ['a'-'z' 'A'-'Z' '0'-'9' '\'' '_']* }}
+STRINGLIT   = {{ '"' [^'"']* '"'}}

@@ -1,0 +1,18 @@
+open Ocamlbuild_plugin;;
+open Command;;
+open Ocamlbuild_pack;;
+
+let ocamlfind_query pkg =
+  let cmd = Printf.sprintf "ocamlfind query %s" (Filename.quote pkg) in
+  My_unix.run_and_open cmd (fun ic ->
+    Log.dprintf 5 "Getting Ocaml directory from command %s" cmd;
+    input_line ic);;
+
+dispatch begin function
+| After_rules -> 
+    (* We declare external libraries *)
+    ocaml_lib ~extern:true ~dir:(@EXTLIB_INC@) "extLib";
+    ocaml_lib ~extern:true ~dir:(@MPI_INC@) "mpi"
+	
+| _ -> ()
+end

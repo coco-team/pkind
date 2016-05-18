@@ -1,0 +1,13 @@
+%left LEFTSQUARE WHEN ELSE
+%left UPCARAT
+%left IMPLIES
+%left OR NOR
+%left XOR
+%left AND
+%left EQUALS DIAMOND
+%left GREATERTHAN GTEQUALS LESSTHAN LTEQUALS
+%left PLUS MINUS
+%left STAR SLASH MOD DIV PIPE FBY ARROW
+%nonassoc UMINUS NOT CURRENT PRE INT REAL
+%left DOT
+/* dont forget to increase the precedence of reduce 3 */
